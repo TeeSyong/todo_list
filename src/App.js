@@ -1,23 +1,158 @@
-import logo from './logo.svg';
+// src/App.js
+import React, { useState, useEffect } from 'react';
 import './App.css';
+import Activity from './Activity'; // Updated import
 
 function App() {
+  const [activity, setActivity] = useState('');
+  const [price, setPrice] = useState('');
+  const [type, setType] = useState('');
+  const [booking, setBooking] = useState(false);
+  const [accessibility, setAccessibility] = useState(50);
+  const [todos, settodos] = useState([]); // Keeping 'todos' for now, see note below
+
+  useEffect(() => {
+    const storedtodos = localStorage.getItem('todos');
+    if (storedtodos) {
+      const parsedtodos = JSON.parse(storedtodos);
+      settodos(parsedtodos.map(user => Activity.fromJSON(user))); // Updated to Activity
+    }
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!activity || !price || !type) return;
+
+    const newActivity = new Activity(activity, parseInt(price), type, booking, accessibility); // Updated to Activity
+    const updatedtodos = [...todos, newActivity];
+    settodos(updatedtodos);
+    localStorage.setItem('todos', JSON.stringify(updatedtodos));
+
+    setActivity('');
+    setPrice('');
+    setType('');
+    setBooking(false);
+    setAccessibility(50);
+  };
+
+  const handleDelete = (index) => {
+    const updatedtodos = todos.filter((_, i) => i !== index);
+    settodos(updatedtodos);
+    localStorage.setItem('todos', JSON.stringify(updatedtodos));
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <h1>ToDo List ({todos.length})</h1>
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label>
+            Activity:
+            <input
+              type="text"
+              value={activity}
+              onChange={(e) => setActivity(e.target.value)}
+              placeholder="Enter activity"
+            />
+          </label>
+        </div>
+        <div className="form-group">
+          <label>
+            Price:
+            <input
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(e.target.value)}
+              placeholder="Enter price"
+            />
+          </label>
+        </div>
+        <div className="form-group">
+          <label>
+            Type:
+            <select
+              value={type}
+              onChange={(e) => setType(e.target.value)}
+            >
+              <option value="" disabled>
+                Select a type
+              </option>
+              <option value="education">Study</option>
+              <option value="recreational">Play Game</option>
+              <option value="social">Sport</option>
+              <option value="diy">Sport</option>
+              <option value="charity">Sport</option>
+              <option value="cooking">Sport</option>
+              <option value="relaxation">Sport</option>
+              <option value="music">Sport</option>
+              <option value="busywork">Sport</option>
+
+            </select>
+          </label>
+        </div>
+        <div className="form-group">
+          <label>
+            Booking:
+            <input
+              type="checkbox"
+              checked={booking}
+              onChange={(e) => setBooking(e.target.checked)}
+            />
+          </label>
+        </div>
+        <div className="form-group">
+          <label>
+            Accessibility (0-100):
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={accessibility}
+              onChange={(e) => setAccessibility(parseInt(e.target.value))}
+            />
+            <span>{accessibility}</span>
+          </label>
+        </div>
+        <button type="submit">Add To Dos</button>
+      </form>
+
+      {todos.length === 0 ? (
+        <p className="no-todos">No to dos added yet.</p>
+      ) : (
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Activity</th>
+                <th>Price</th>
+                <th>Type</th>
+                <th>Booking</th>
+                <th>Accessibility</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {todos.map((user, index) => (
+                <tr key={index}>
+                  <td>{user.activity}</td>
+                  <td>{user.price}</td>
+                  <td>{user.type}</td>
+                  <td>{user.booking ? 'Yes' : 'No'}</td>
+                  <td>{user.accessibility}</td>
+                  <td>
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDelete(index)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
