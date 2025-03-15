@@ -78,14 +78,14 @@ function App() {
                 Select a type
               </option>
               <option value="education">Study</option>
-              <option value="recreational">Play Game</option>
-              <option value="social">Sport</option>
-              <option value="diy">Sport</option>
-              <option value="charity">Sport</option>
-              <option value="cooking">Sport</option>
-              <option value="relaxation">Sport</option>
-              <option value="music">Sport</option>
-              <option value="busywork">Sport</option>
+              <option value="recreational">Recreational</option>
+              <option value="social">social</option>
+              <option value="diy">diy</option>
+              <option value="charity">charity</option>
+              <option value="cooking">cooking</option>
+              <option value="relaxation">relaxation</option>
+              <option value="music">music</option>
+              <option value="busywork">busywork</option>
 
             </select>
           </label>
